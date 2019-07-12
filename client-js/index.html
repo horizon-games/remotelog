@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="">
+<head>
+<meta charset="utf-8">
+<title>remotelog (example)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="" />
+<script charset="utf-8" src="./remotelog.js" type="text/javascript"></script>
+<style>
+</style>
+</head>
+<body>
+  
+<div id="app">
+  <h1>hi, open your console</h1>
+</div>
+
+<script>
+  const svcFetch = window.fetch.bind(window)
+  let svc = new RemoteLog('http://127.0.0.1:1111', svcFetch)
+
+  svc.log({ msg: 'log me', object: { 'extra': 123 } }).then(resp => {
+    console.log('resp:', resp)
+  }).catch(err => {
+    console.log('err:', err)
+  })
+
+</script>
+
+</body>
+</html>
