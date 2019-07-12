@@ -17,3 +17,5 @@ generate-client:
 run:
 	go run .
 
+install:
+	go install .

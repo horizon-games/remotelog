@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-chi/chi"
@@ -12,14 +14,24 @@ import (
 	"github.com/go-chi/cors"
 )
 
+var (
+	flags = flag.NewFlagSet("remotelog", flag.ExitOnError)
+	host  = flags.String("host", "0.0.0.0", "http server hostname")
+	port  = flags.String("port", "1111", "http server port")
+)
+
 func main() {
-	err := startServer()
+	flags.Parse(os.Args[1:])
+
+	addr := fmt.Sprintf("%s:%s", *host, *port)
+
+	err := startServer(addr)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func startServer() error {
+func startServer(addr string) error {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	// r.Use(middleware.Logger)
@@ -44,7 +56,7 @@ func startServer() error {
 	webrpcHandler := NewRemoteLogServer(&RemoteLogRPC{})
 	r.Handle("/*", webrpcHandler)
 
-	return http.ListenAndServe(":1111", r)
+	return http.ListenAndServe(addr, r)
 }
 
 type RemoteLogRPC struct {
